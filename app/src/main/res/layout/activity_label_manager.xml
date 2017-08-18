@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:background="@color/bar_light_blue"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="标签管理"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteY="81dp"
+            tools:layout_editor_absoluteX="8dp" />
+        <ImageView
+            android:id="@+id/iv_back_account"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/ic_back"/>
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_label_manager"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:src="@mipmap/ic_launcher_round" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@drawable/divider_grey"
+        android:orientation="vertical"
+        android:showDividers="middle|end|beginning">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="标签名称"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@id/textView3"
+                android:text="标签1"
+                android:textSize="16sp"
+                android:background="@null"
+                android:textCursorDrawable="@null"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="RFID码"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="25dp"
+                android:layout_toRightOf="@id/textView2"
+                android:text="111111111111111111111111"
+                android:textSize="16sp"
+                android:background="@null"
+                android:textCursorDrawable="@null"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:text="解除绑定"
+                android:layout_marginLeft="20dp"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_into"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

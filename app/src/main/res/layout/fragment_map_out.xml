@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="0dp"
+    android:orientation="vertical">
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/mapView_out"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </com.baidu.mapapi.map.MapView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/button_float"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:elevation="7dp"
+        app:layout_anchor="@+id/sheet_bottom"
+        app:layout_anchorGravity="start|top"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_dialog_email"/>
+
+    <include
+        layout="@layout/sheet_layout" />
+
+</android.support.design.widget.CoordinatorLayout>

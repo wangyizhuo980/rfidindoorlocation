@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sheet_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:elevation="5dp"
+    android:minHeight="100dp"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="56dp"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_sheet_content"
+        android:layout_width="50dp"
+        android:layout_height="56dp"
+        android:layout_marginLeft="8dp"
+        android:src="@mipmap/ic_launcher_round" />
+    <TextView
+        android:id="@+id/tv_sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="80dp"
+        android:gravity="center_vertical"
+        android:text="标签1：南京市栖霞区"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/ic_unfold"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_unfold"
+        android:scaleType="center"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tv_sheet_title"
+        android:background="@drawable/divider_grey"/>
+
+
+    <LinearLayout
+        android:id="@+id/sheet_menu"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/bar_light_blue"
+        android:layout_below="@id/tv_sheet_title">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="70dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="历史轨迹"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="标签管理"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="安全警报"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="分享位置"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_indoor_map"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/sheet_menu"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="@drawable/divider_grey" />
+
+
+</RelativeLayout>

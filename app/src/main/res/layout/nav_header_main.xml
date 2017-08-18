@@ -1,35 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height"
+    android:layout_height="240dp"
     android:background="@drawable/side_nav_bar"
+    android:backgroundTint="@android:color/holo_blue_dark"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_draw_image"
+        android:layout_width="48dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintBottom_toTopOf="@+id/tv_draw_email"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:layout_conversion_absoluteHeight="64dp"
+        tools:layout_conversion_absoluteWidth="48dp"
+        tools:layout_conversion_absoluteX="16dp"
+        tools:layout_conversion_absoluteY="16dp"
+        android:layout_marginStart="16dp" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Android Studio"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_draw_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+        android:layout_marginLeft="8dp"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:text="Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/civ_draw_image"
+        app:layout_constraintLeft_toRightOf="@+id/civ_draw_image"
+        tools:layout_conversion_absoluteHeight="32dp"
+        tools:layout_conversion_absoluteWidth="352dp"
+        tools:layout_conversion_absoluteX="16dp"
+        tools:layout_conversion_absoluteY="80dp"
+        android:layout_marginStart="8dp" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_draw_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="838726806@qq.com"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@+id/civ_draw_image"
+        tools:layout_conversion_absoluteHeight="16dp"
+        tools:layout_conversion_absoluteWidth="179dp"
+        tools:layout_conversion_absoluteX="16dp"
+        tools:layout_conversion_absoluteY="112dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-1dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:background="@android:color/background_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_label_selected"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="40dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tv_label_selected"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="45dp"
+            android:textSize="18sp"
+            android:text="标签1" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
