@@ -21,7 +21,7 @@
             tools:layout_editor_absoluteY="81dp"
             tools:layout_editor_absoluteX="8dp" />
         <ImageView
-            android:id="@+id/iv_back_account"
+            android:id="@+id/iv_back_label"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:src="@drawable/ic_back"/>

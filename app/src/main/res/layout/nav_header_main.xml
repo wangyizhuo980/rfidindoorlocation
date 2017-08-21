@@ -59,13 +59,12 @@
         tools:layout_conversion_absoluteY="112dp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout" />
+        app:layout_constraintBottom_toTopOf="@+id/layout_label_selected" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/layout_label_selected"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-1dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:background="@android:color/background_light"
@@ -75,11 +74,11 @@
 
         <ImageView
             android:id="@+id/iv_label_selected"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="40dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="18dp"
             android:src="@mipmap/ic_launcher" />
 
         <TextView
@@ -88,8 +87,8 @@
             android:layout_gravity="center"
             android:textColor="@android:color/black"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
-            android:textSize="18sp"
+            android:layout_marginLeft="25dp"
+            android:textSize="16sp"
             android:text="标签1" />
     </LinearLayout>
 

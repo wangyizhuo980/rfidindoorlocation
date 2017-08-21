@@ -1,20 +1,21 @@
 package com.wangyizhuo.rfidindoorlocation;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,18 +36,24 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.wangyizhuo.rfidindoorlocation.db.Label;
+import com.wangyizhuo.rfidindoorlocation.db.Map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 /*
  * Created by wangyizhuo on 2017/8/16.
  */
 
 public class OutdoorMapFragment extends Fragment implements View.OnClickListener {
+    public static Map map1;
+    private BDLocation mLocation;
     private int sheetState = BottomSheetBehavior.STATE_HIDDEN;
     private LocationClient mLocationClient;
     private MapView mapView;
@@ -54,10 +61,12 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
     private TextView sheetTitle;
     private BottomSheetBehavior behavior;
     private RelativeLayout bottomSheet;
-    private boolean isFirstLocate = false;
+    private boolean isFirstLocate = true;
     private ImageView contentImage;
     private PhotoViewAttacher attacher;
     private ImageView indoorMap;
+    private FrameLayout mapContainer;
+    private LinearLayout pointView;
 
     @Nullable
     @Override
@@ -79,9 +88,11 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
         sheetTitle = (TextView) mView.findViewById(R.id.tv_sheet_title);
         behavior = BottomSheetBehavior.from(bottomSheet);
         contentImage = (ImageView) mView.findViewById(R.id.iv_sheet_content);
-        FloatingActionButton floatingActionButton = (FloatingActionButton)
-                mView.findViewById(R.id.button_float);
-        indoorMap = (ImageView) mView.findViewById(R.id.iv_indoor_map);
+        FloatingActionButton zoomMyLocation = (FloatingActionButton)
+                mView.findViewById(R.id.button_float_mlocation);
+        indoorMap = (ImageView) mView.findViewById(R.id.iv_map_background);
+        TextView labelManager = (TextView) mView.findViewById(R.id.tv_sheet_manager);
+        mapContainer = (FrameLayout) mView.findViewById(R.id.container_indoormap);
 
         //bottomsheet设置
         setBottomSheet();
@@ -97,23 +108,51 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
         //设置标签marker
         overLayLabelList.add(LabelsFragment.labelList.get(0));
         addLabelsOverLay(overLayLabelList);
+        //设置各项点击事件
+        zoomMyLocation.setOnClickListener(this);
+        labelManager.setOnClickListener(this);
         //设置标签marker点击事件
-        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Label label = (Label) marker.getExtraInfo().get("label");
-                if (sheetState == BottomSheetBehavior.STATE_HIDDEN) {
-                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                }
-                //加载marker信息
-                Glide.with(getActivity()).load(R.mipmap.ic_launcher_round).into(contentImage);
-                return false;
-            }
-        });
+        setMarkerClick();
 
         return mView;
     }
 
+    //各类点击事件
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()) {
+            case R.id.iv_map_background:
+                //原图图片查看活动
+                intent = new Intent(getActivity(), ImageBrowseActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.tv_sheet_manager:
+                intent = new Intent(getActivity(), LabelManagerActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.button_float_mlocation:
+                zoomToMyLocation();
+        }
+    }
+
+    private void setMarkerClick() {
+        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Label label = (Label) marker.getExtraInfo().get("label");
+                ((MainActivity) getActivity()).setSelectedLabel(label);
+                if (sheetState == BottomSheetBehavior.STATE_HIDDEN) {
+                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+                //zoom
+                zoomToLabelLocation(label);
+                //加载marker对应label图标
+                Glide.with(getActivity()).load(R.mipmap.ic_launcher_round).into(contentImage);
+                return false;
+            }
+        });
+    }
     //设置标签覆盖物
     private void addLabelsOverLay(List<Label> overLayLabelList) {
         BitmapDescriptor markerIcon = BitmapDescriptorFactory
@@ -124,7 +163,7 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
 
         for(Label label : overLayLabelList){
             //获取经纬度
-            latLng = new LatLng(label.getLatitude(), label.getLongitude());
+            latLng = label.getLatLng();
             //设置marker
             options = new MarkerOptions()
                     .position(latLng)//设置位置
@@ -153,32 +192,29 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    //地图移动到我的位置
-    private void navigateTo(BDLocation location) {
+    //我的位置发生变化时
+    private void navigate() {
         if (isFirstLocate) {
-            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
-            baiduMap.animateMapStatus(update);
-            update = MapStatusUpdateFactory.zoomTo(19f);
-            baiduMap.animateMapStatus(update);
+            zoomToLabelLocation(MainActivity.selectedLabel);
             isFirstLocate = false;
         }
         //显示我的位置
         MyLocationData.Builder locationBuilder = new MyLocationData.Builder();
-        locationBuilder.latitude(location.getLatitude());
-        locationBuilder.longitude(location.getLongitude());
+        locationBuilder.latitude(mLocation.getLatitude());
+        locationBuilder.longitude(mLocation.getLongitude());
         MyLocationData myLocationData = locationBuilder.build();
         baiduMap.setMyLocationData(myLocationData);
     }
 
-    //设置位置信息变化监听器
+    //设置我的位置信息变化监听器
     private void setLocationListener() {
         mLocationClient.registerLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
                 if (bdLocation.getLocType() == BDLocation.TypeGpsLocation ||
                         bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-                    navigateTo(bdLocation);
+                    mLocation = bdLocation;
+                    navigate();
                 }
             }
 
@@ -187,28 +223,30 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
             }
         });
     }
+    //zoom到我的位置
+    private void zoomToMyLocation() {
+        LatLng ll = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+        MapStatusUpdate update = MapStatusUpdateFactory.zoomTo(17);
+        baiduMap.animateMapStatus(update);
+        update = MapStatusUpdateFactory.newLatLng(ll);
+        baiduMap.animateMapStatus(update);
+    }
+    //zoom到标签的位置
+    public void zoomToLabelLocation(Label label) {
+        if (label.getLatLng() != null && baiduMap != null) {
+            MapStatusUpdate update = MapStatusUpdateFactory.zoomTo(17);
+            baiduMap.animateMapStatus(update);
+            update = MapStatusUpdateFactory.newLatLng(label.getLatLng());
+            baiduMap.animateMapStatus(update);
+        }
+    }
+
     //bottomsheet设置
     public void setBottomSheet() {
         behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 sheetState = newState;
-                if(newState != BottomSheetBehavior.STATE_COLLAPSED &&
-                        contentImage.getVisibility() == View.GONE){
-                    contentImage.setVisibility(View.VISIBLE);
-                }else if (newState == BottomSheetBehavior.STATE_COLLAPSED &&
-                        contentImage.getVisibility() == View.VISIBLE){
-                    contentImage.setVisibility(View.GONE);
-                }else if (newState == BottomSheetBehavior.STATE_HIDDEN &&
-                        contentImage.getVisibility() == View.VISIBLE) {
-                    contentImage.setVisibility(View.GONE);
-                }else if (newState == BottomSheetBehavior.STATE_EXPANDED &&
-                        mapView.getVisibility() == View.VISIBLE) {
-                    mapView.setVisibility(View.GONE);
-                } else if (newState != BottomSheetBehavior.STATE_EXPANDED &&
-                        mapView.getVisibility() == View.GONE) {
-                    mapView.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
@@ -229,17 +267,43 @@ public class OutdoorMapFragment extends Fragment implements View.OnClickListener
 
         behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        //室内图设置
+        //室内图点击设置
         indoorMap.setOnClickListener(this);
-    }
+        //室内图加载
+        map1 = new Map();
+        map1.setStartLatLng(32.117970, 118.937945);
+        map1.setEndLatLng(32.117825, 118.938187);
+        map1.setSrc(R.drawable.map_1);
+        indoorMap.setImageResource(map1.getSrc());
+        //室内地图标签位置点加载
+        pointView = (LinearLayout) LayoutInflater.from(getContext()).
+                inflate(R.layout.point_layout, mapContainer, false);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)
+                pointView.getLayoutParams();
+            //获取屏幕宽度
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int screenWidth = dm.widthPixels;
+            //获取图片实际高宽
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        BitmapFactory.decodeResource(getResources(), R.drawable.map_1, options);
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
 
-    //各类点击事件
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_indoor_map:
-                //原图图片查看活动
-        }
+        //图片显示高度为
+        int imageViewHeight = (int) (screenWidth * ( (double) imageHeight / imageWidth));
+             //获取宽度比例
+        double widthProportion = (MainActivity.selectedLabel.getLatLng().longitude
+                - map1.getStartLatLng().longitude ) / ( map1.getEndLatLng().longitude
+                - map1.getStartLatLng().longitude);
+            //获取高度比例
+        double heightProportion = ( map1.getStartLatLng().latitude
+                - MainActivity.selectedLabel.getLatLng().latitude) /
+                ( map1.getStartLatLng().latitude - map1.getEndLatLng().latitude);
+            //计算出点相对于地图左边界与上边界距离
+        params.leftMargin = (int) (screenWidth * widthProportion);
+        params.topMargin = (int) (imageViewHeight * heightProportion);
+        mapContainer.addView(pointView, params);
     }
 
     @Override

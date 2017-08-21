@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    android:elevation="5dp"
     android:minHeight="100dp"
     app:behavior_hideable="true"
     app:behavior_peekHeight="56dp"
@@ -44,50 +43,71 @@
 
 
     <LinearLayout
-        android:id="@+id/sheet_menu"
+        android:id="@+id/sheet_menus"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginTop="20dp"
         android:background="@color/bar_light_blue"
         android:layout_below="@id/tv_sheet_title">
         <TextView
+            android:id="@+id/tv_sheet_trail"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="70dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:text="历史轨迹"/>
+            android:text="历史轨迹"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp"/>
         <TextView
+            android:id="@+id/tv_sheet_manager"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:text="标签管理"/>
+            android:text="标签管理"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp" />
         <TextView
+            android:id="@+id/tv_sheet_alarm"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:text="安全警报"/>
+            android:text="安全警报"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp" />
         <TextView
+            android:id="@+id/tv_sheet_share"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:textColor="@android:color/white"
-            android:text="分享位置"/>
+            android:text="分享位置"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="30dp" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/iv_indoor_map"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/sheet_menu"
-        android:layout_centerHorizontal="true"
+    <FrameLayout
+        android:id="@+id/container_indoormap"
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:background="@drawable/divider_grey" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sheet_menus"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/iv_map_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:adjustViewBounds="true"
+            android:background="@drawable/divider_grey"
+            android:scaleType="fitStart"
+            android:src="@drawable/map_1" />
+        <FrameLayout
+            android:id="@+id/mark_indoor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+        </FrameLayout>
+
+    </FrameLayout>
+
 
 
 </RelativeLayout>

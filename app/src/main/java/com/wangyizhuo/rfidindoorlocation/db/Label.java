@@ -1,5 +1,7 @@
 package com.wangyizhuo.rfidindoorlocation.db;
 
+import com.baidu.mapapi.model.LatLng;
+
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Date;
@@ -17,10 +19,8 @@ public class Label implements Serializable {
     private String labelName = "标签";
     //标签RFID码
     private String rfidCode = "0";
-    //纬度
-    private double latitude = 0;
-    //经度
-    private double longitude = 0;
+    //经纬度
+    private LatLng latLng = null;
     //位置信息
     private String location = "无";
     //信息更新时间
@@ -33,46 +33,17 @@ public class Label implements Serializable {
         date = new Date();
     }
 
-    public Label(int id, int userId, String labelName, String rfidCode, double latitude,
-                 double longitude, String location, Date date, URL imageURL) {
-        this.id = id;
-        this.userId = userId;
-        this.labelName = labelName;
-        this.rfidCode = rfidCode;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.location = location;
-        this.date = date;
-        this.imageURL = imageURL;
-    }
-    public Label(int id, int userId, String labelName, String rfidCode, double latitude,
-                 double longitude, String location, Date date, int imageSrc) {
-        this.id = id;
-        this.userId = userId;
-        this.labelName = labelName;
-        this.rfidCode = rfidCode;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.location = location;
-        this.date = date;
-        this.imageSrc = imageSrc;
-    }
 
     public int getImageSrc() {
         return imageSrc;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public LatLng getLatLng() {
+        return latLng;
     }
 
     public void setLatLng(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
+        this.latLng = new LatLng(latitude, longitude);
     }
 
     public void setImageSrc(int imageSrc) {

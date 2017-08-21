@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.baidu.mapapi.model.LatLng;
 import com.wangyizhuo.rfidindoorlocation.db.Label;
 import com.wangyizhuo.rfidindoorlocation.util.LabelAdapter;
 
@@ -41,6 +42,7 @@ public class LabelsFragment extends Fragment {
         MainActivity.selectedLabel = labelList.get(0);
         //recyclerview填充数据
         LabelAdapter adapter = new LabelAdapter(labelList);
+        adapter.setActivity((MainActivity) getActivity());
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
@@ -59,7 +61,7 @@ public class LabelsFragment extends Fragment {
             label.setImageSrc(R.mipmap.ic_launcher_round);
             labelList.add(label);
         }
-        labelList.get(0).setLatLng(32.117970, 118.937945);
+        labelList.get(0).setLatLng(32.117898, 118.938066);
         return labelList;
     }
 

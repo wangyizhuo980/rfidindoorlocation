@@ -46,7 +46,11 @@
         <activity
             android:name=".LabelManagerActivity"
             android:label="@string/title_activity_label_manager" />
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ImageBrowseActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

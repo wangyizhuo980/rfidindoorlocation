@@ -22,6 +22,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,14 @@ public class MainActivity extends AppCompatActivity
     private OutdoorMapFragment mOutdoorMapFragment;
     private ImageView labelsIcon;
     private ImageView locationIcon;
+    private LinearLayout selectedLabelLayout;
+    private TextView selectedLabelText;
     public static Label selectedLabel;
+
+    public void setSelectedLabel(Label selectedLabel) {
+        MainActivity.selectedLabel = selectedLabel;
+        selectedLabelText.setText(selectedLabel.getLabelName());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +70,8 @@ public class MainActivity extends AppCompatActivity
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_labels);
         mLabelsFragment = (LabelsFragment) getSupportFragmentManager().
                 findFragmentById(R.id.fragment_labels);
+        selectedLabelLayout = (LinearLayout) headerView.findViewById(R.id.layout_label_selected);
+        selectedLabelText = (TextView) headerView.findViewById(R.id.tv_label_selected);
 
         //加载碎片
         initLablesFragment();
@@ -74,34 +84,34 @@ public class MainActivity extends AppCompatActivity
         headImage.setOnClickListener(this);
         drawName.setOnClickListener(this);
         //点击左上角头像打开抽屉
-        circle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout != null) {
-                    drawerLayout.openDrawer(Gravity.START);
-                }
-            }
-        });
+        circle.setOnClickListener(this);
         //抽屉菜单栏点击事件
         navigationView.setNavigationItemSelectedListener(this);
+        selectedLabelLayout.setOnClickListener(this);
     }
 
     //各类点击事件
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.layout_label_selected:
+                if (selectedLabel.getLatLng() != null) {
+                    OutdoorMapFragment outdoorMapFragment = initOutdoorMapFragment();
+                    outdoorMapFragment.zoomToLabelLocation(selectedLabel);
+                } else {
+                    Toast.makeText(this, "标签位置信息有误", Toast.LENGTH_SHORT).show();
+                }
+                drawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.civ_bar:
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(Gravity.START);
+                }
+                break;
             case R.id.iv_labels_icon:
-                labelsIcon.setBackgroundTintList
-                        (getColorStateList(android.R.color.holo_blue_light));
-                locationIcon.setBackgroundTintList
-                        (getColorStateList(android.R.color.tertiary_text_dark));
+
                 initLablesFragment();
                 break;
             case R.id.iv_location_icon:
-                locationIcon.setBackgroundTintList
-                        (getColorStateList(android.R.color.holo_blue_light));
-                labelsIcon.setBackgroundTintList
-                        (getColorStateList(android.R.color.tertiary_text_dark));
                 initOutdoorMapFragment();
                 break;
             case R.id.civ_draw_image:
@@ -113,7 +123,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     //加载map碎片
-    private void initOutdoorMapFragment() {
+    public OutdoorMapFragment initOutdoorMapFragment() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            locationIcon.setBackgroundTintList
+                    (getColorStateList(android.R.color.holo_blue_light));
+            labelsIcon.setBackgroundTintList
+                    (getColorStateList(android.R.color.tertiary_text_dark));
+        }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (mOutdoorMapFragment == null) {
             mOutdoorMapFragment = new OutdoorMapFragment();
@@ -122,9 +138,16 @@ public class MainActivity extends AppCompatActivity
         hideFragment(transaction);
         transaction.show(mOutdoorMapFragment);
         transaction.commit();
+        return mOutdoorMapFragment;
     }
     //加载labels碎片
     private void initLablesFragment() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            labelsIcon.setBackgroundTintList
+                    (getColorStateList(android.R.color.holo_blue_light));
+            locationIcon.setBackgroundTintList
+                    (getColorStateList(android.R.color.tertiary_text_dark));
+        }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         if (mLabelsFragment == null) {
             mLabelsFragment = new LabelsFragment();
@@ -153,13 +176,13 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_alarm) {
 
         } else if (id == R.id.nav_manage) {
-
+            Intent intent = new Intent(this, LabelManagerActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
     //收到动态权限申请请求

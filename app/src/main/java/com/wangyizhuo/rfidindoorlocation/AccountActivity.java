@@ -13,7 +13,7 @@ import com.wangyizhuo.rfidindoorlocation.util.ActivityCollector;
 
 import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
-public class AccountActivity extends SwipeBackActivity implements View.OnClickListener {
+public class AccountActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

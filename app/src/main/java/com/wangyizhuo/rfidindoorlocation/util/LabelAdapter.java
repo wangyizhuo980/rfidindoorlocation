@@ -1,14 +1,20 @@
 package com.wangyizhuo.rfidindoorlocation.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.wangyizhuo.rfidindoorlocation.MainActivity;
+import com.wangyizhuo.rfidindoorlocation.OutdoorMapFragment;
 import com.wangyizhuo.rfidindoorlocation.R;
 import com.wangyizhuo.rfidindoorlocation.db.Label;
 
@@ -24,9 +30,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.ViewHolder> {
     private List<Label> mLabelList;
     private Context mContext;
+    private MainActivity main;
 
     public LabelAdapter(List<Label> labelList) {
         this.mLabelList = labelList;
+    }
+
+    public void setActivity(MainActivity main) {
+        this.main = main;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -61,17 +72,26 @@ public class LabelAdapter extends RecyclerView.Adapter<LabelAdapter.ViewHolder> 
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         if (mContext == null) {
             mContext = parent.getContext();
         }
-        View view = LayoutInflater.from(mContext)
+        final View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.item_label, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
         holder.layout.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-
+                int position = holder.getAdapterPosition();
+                Label label = mLabelList.get(position);
+                main.setSelectedLabel(label);
+                if (label.getLatLng() != null) {
+                    OutdoorMapFragment outdoorMapFragment = main.initOutdoorMapFragment();
+                    outdoorMapFragment.zoomToLabelLocation(label);
+                } else {
+                    Toast.makeText(main, "标签位置信息有误", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return holder;
